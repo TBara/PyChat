@@ -3,8 +3,14 @@
 # https://stackoverflow.com/questions/17667903/python-socket-receive-large-amount-of-data
 # https://realpython.com/python-sockets/#echo-server
 
+import sys
 import socket
+from time import sleep
+from .common import flush_input as flush
+
 BUFFER = 2048
+TERMINATE = "\q"
+
 
 # Simple HTTP client and server class
 class ServerSocket:
@@ -23,28 +29,33 @@ class ServerSocket:
 
     # Start a simple server by binding and listening
     # to provided host and port. 
-    def http_server(self, data, host, port):
+    def http_server(self, host, port):
         self.sock.bind((host, port))
         self.sock.listen(5)
 
-        cnt = 1
-        while True:
-            
+        while True:       
             conn, _ = self.sock.accept()
             try:
+                msg = conn.recv(BUFFER)   
+                print(str(msg.decode()))
                 
-                req = conn.recv(BUFFER)   
-                print('Received: ', req)
-                
-                print("\nSending>>>>>>>>>>>>>>")
-                data = b"Server replies Hello World!"
-                conn.sendall(data + "_" + str(cnt))
-                print(data.decode())
-                print("<<<<<<<<<<<<<<<<")
-                
-                conn.close()
-                cnt += 1
+                if msg == TERMINATE:
+                    flush()
+                    conn.close()
+                else:
+                    flush()
+                    resp = input("Reply:")
+                    conn.sendall(resp.encode())
+                    
+                    conn.close()
+                    if resp == TERMINATE:
+                        break
             except socket.error as e:
                 print("Socket error: %s", e)
+                conn.close()
                 break
+            finally:
+                flush()
+
+        self.sock.close()
         return

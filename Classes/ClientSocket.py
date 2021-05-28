@@ -4,8 +4,10 @@
 # https://realpython.com/python-sockets/#echo-server
 
 import socket
+from .common import flush_input as flush
 
 BUFFER = 2048
+TERMINATE = '\q'
 
 # Simple HTTP client and server class
 class ClientSocket:
@@ -36,13 +38,21 @@ class ClientSocket:
 
     # Accepts a bytes formatted http request and sends it
     # to the server. Returns server provided data
-    def http_client(self, request):
-        self.sock.sendall(request)
+    def http_client(self):
+        
+        flush() 
+        msg = str(input("Msg: "))
 
-        data = b''
-        while True:
-            packet = self.sock.recv(BUFFER)
-            data += packet
-            if len(packet) == 0:
-                break
-        return data
+        # Terminate if told to
+        if msg == TERMINATE:
+            self.sock.sendall(msg.encode())
+            return msg.encode()
+        else:
+            self.sock.sendall(msg.encode())
+            data = b''
+            while True:
+                resp = self.sock.recv(BUFFER)
+                data += resp
+                if len(resp) == 0:
+                    break
+            return data
