@@ -9,7 +9,7 @@ from time import sleep
 from .common import flush_input as flush
 
 BUFFER = 2048
-TERMINATE = "\q"
+TERMINATE = "/q"
 
 
 # Simple HTTP client and server class
@@ -38,15 +38,16 @@ class ServerSocket:
             try:
                 msg = conn.recv(BUFFER)   
                 print(str(msg.decode()))
+                flush()
                 
-                if msg == TERMINATE:
+                if msg.decode() == TERMINATE:
+                    conn.sendall(b'')
                     flush()
                     conn.close()
                 else:
-                    flush()
                     resp = input("Reply:")
                     conn.sendall(resp.encode())
-                    
+                    flush()
                     conn.close()
                     if resp == TERMINATE:
                         break
@@ -54,8 +55,7 @@ class ServerSocket:
                 print("Socket error: %s", e)
                 conn.close()
                 break
-            finally:
-                flush()
+
 
         self.sock.close()
         return

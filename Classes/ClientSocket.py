@@ -7,7 +7,7 @@ import socket
 from .common import flush_input as flush
 
 BUFFER = 2048
-TERMINATE = '\q'
+TERMINATE = '/q'
 
 # Simple HTTP client and server class
 class ClientSocket:

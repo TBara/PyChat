@@ -15,7 +15,7 @@ def send_client_request(host, port):
             print(data.decode())
             s.close_connection()
 
-            if str(data.decode()) == "\q":
+            if str(data.decode()) == "/q":
                 break
         else:
             print("No connection created.")
