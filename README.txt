@@ -1,6 +1,5 @@
 Author: Tom Barabasz
 
-
 To run the server script, run command:
     python3 http_server.py
 

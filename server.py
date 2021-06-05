@@ -1,5 +1,4 @@
 import socket
-#from Classes.common import flush_input as flush
 
 HOST = 'localhost'  
 PORT = 11236
@@ -49,6 +48,7 @@ def main():
                     # Send reply to client
                     flush()
                     resp = input("Reply:")
+                    flush()
                     try:
                         conn.sendall(resp.encode())
                     
